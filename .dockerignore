@@ -2,3 +2,4 @@ env
 Dockerfile
 Dockerfile.prod
 .coveragrc
+.coverage

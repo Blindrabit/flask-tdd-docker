@@ -50,6 +50,40 @@ class Users(Resource):
             api.abort(404, f"User {user_id} does not exist")
         return user, 200
 
+    @api.expect(user, validate=True)
+    def put(self, user_id):
+        post_data = request.get_json()
+        username = post_data.get("username")
+        email = post_data.get("email")
+        response_object = {}
+
+        user = User.query.filter_by(id=user_id).first()
+        if not user:
+            api.abort(404, f"User {user_id} does not exist")
+
+        if User.query.filter_by(email=email).first():
+            response_object["message"] = "Sorry. That email already exists."
+            return response_object, 400
+
+        user.username = username
+        user.email = email
+        db.session.commit()
+
+        response_object["message"] = f"User {user.id} was updated!"
+        return response_object, 200
+
+    def delete(self, user_id):
+        response = {}
+        user = User.query.filter_by(id=user_id).first()
+
+        if not user:
+            api.abort(404, f"User {user_id} does not exist!")
+
+        db.session.delete(user)
+        db.session.commit()
+        response["message"] = f"{user.email} was removed!"
+        return response, 200
+
 
 api.add_resource(UserList, "/users")
 api.add_resource(Users, "/users/<int:user_id>")
