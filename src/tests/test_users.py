@@ -53,7 +53,7 @@ def test_add_user_duplicate_email(test_app, test_database):
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
-    assert resp.status_code == 400
+    assert resp.status_code == 409
     assert data.get("message") == "Sorry. That email already exists."
 
 
@@ -177,5 +177,5 @@ def test_update_user_duplicate_email(test_app, test_database, add_user):
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
-    assert resp.status_code == 400
+    assert resp.status_code == 409
     assert "Sorry. That email already exists." in data["message"]
